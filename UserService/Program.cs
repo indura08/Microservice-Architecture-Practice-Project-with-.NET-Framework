@@ -1,4 +1,5 @@
-namespace OrderService
+
+namespace UserService
 {
     public class Program
     {
