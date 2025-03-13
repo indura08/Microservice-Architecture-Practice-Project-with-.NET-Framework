@@ -46,5 +46,35 @@ namespace ProductService.Controllers
             //Created() requires a URI as the first argument, which can be an empty string ("") if you don't have a specific location to return.
 
         }
+
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<string>> UpdateProductr(int id, Product newProductproduct)
+        {
+            var currentProduct = await _productService.GetProductById(id);
+            if (currentProduct != null)
+            {
+                await _productService.UpdateProduct(id, newProductproduct);
+                return Ok("Product updated");
+            }
+            else
+            {
+                return NotFound($"Product couldnt found with id: {id}");
+            }
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult<string>> DeleteProduct(int id)
+        {
+            var currentProduct = await _productService.GetProductById(id);
+            if (currentProduct != null)
+            {
+                await _productService.DeleteProduct(id);
+                return Ok("Product deletetd successfully");
+            }
+            else 
+            {
+                return NotFound($"cannot find product with id : {id}");
+            }
+        }
     }
 }
