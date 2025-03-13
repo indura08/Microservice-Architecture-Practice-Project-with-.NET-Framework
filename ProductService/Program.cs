@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using ProductService.Data;
+using ProductService.Data.Services;
+
 namespace ProductService
 {
     public class Program
@@ -8,6 +12,13 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddDbContext<AppDBContext>(options =>
+
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConncetionString"))
+            );
+
+            builder.Services.AddScoped<IProductService, ProductServiceClass>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
