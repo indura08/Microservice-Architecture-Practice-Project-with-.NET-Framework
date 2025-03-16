@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using OrderService.Data;
+using OrderService.Data.Services;
+
 namespace OrderService
 {
     public class Program
@@ -8,7 +12,15 @@ namespace OrderService
 
             // Add services to the container.
 
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConncetionString"))
+            );
+
+            builder.Services.AddHttpClient<UserClient>();
+            builder.Services.AddHttpClient<ProductClient>();
+            builder.Services.AddScoped<IOrderService, OrderServiceClass>();
             builder.Services.AddControllers();
+            
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
