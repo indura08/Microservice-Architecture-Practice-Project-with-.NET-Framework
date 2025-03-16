@@ -30,14 +30,14 @@ namespace UserService.Controllers
             }
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         public async Task<ActionResult<string>> CreateNewUser(User user)
         {
             await _userService.AddNewUser(user);
             return Ok("user created successfully");
         }
 
-        [HttpDelete("/delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<string>> DeleteUser(int id)
         {
             var status = await _userService.DeleteUser(id);
