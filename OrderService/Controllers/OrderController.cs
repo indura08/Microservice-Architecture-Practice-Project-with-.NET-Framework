@@ -24,7 +24,7 @@ namespace OrderService.Controllers
             {
                 return Ok(currentOrder);
             }
-            else return NotFound(new { message = "Order Not FOund" });
+            else return NotFound(new { message = "Order Not Found" });
         }
 
         [HttpPost("create")]

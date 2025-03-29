@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Model
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
         [Required(ErrorMessage = "An email is required")]
         public string EmailAddress { get; set; } = null!;
         [Required(ErrorMessage = "A password is must")]
