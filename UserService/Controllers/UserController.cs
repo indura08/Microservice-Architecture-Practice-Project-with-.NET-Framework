@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data.Services;
 using UserService.Model;
+using UserService.Model.DTOs;
 
 namespace UserService.Controllers
 {
@@ -10,14 +11,16 @@ namespace UserService.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserAccount _userAccount;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IUserAccount userAccount)
         {
             _userService = userService;
+            _userAccount = userAccount;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public async Task<ActionResult<User>> GetUserById(string id)
         {
             var currentUser = await _userService.GetUserById(id);
             if (currentUser != null)
@@ -31,14 +34,14 @@ namespace UserService.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> CreateNewUser(User user)
+        public async Task<ActionResult<string>> CreateNewUser(USerDTO userdto)
         {
-            await _userService.AddNewUser(user);
-            return Ok("user created successfully");
+            var response = await _userAccount.CreateAccount(userdto);
+            return Ok(response);
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<string>> DeleteUser(int id)
+        public async Task<ActionResult<string>> DeleteUser(string id)
         {
             var status = await _userService.DeleteUser(id);
             if (status.ToString() == "Done")
@@ -52,10 +55,17 @@ namespace UserService.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdateUserById(int id, [FromBody] User newUser)
+        public async Task<ActionResult<string>> UpdateUserById(string id, [FromBody] User newUser)
         {
             await _userService.UpdateUser(id, newUser);
             return Ok(new { message = "user Updated"});
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO loginDto)
+        {
+            var response = await _userAccount.Login(loginDto);
+            return Ok(response);
         }
     }
 }

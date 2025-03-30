@@ -2,7 +2,7 @@
 {
     public class LoginResponse
     {
-        public ServiceResponse.LoginResponse response { get; set }
+        public ServiceResponse.LoginResponse response { get; set; }
         public User user { get; set; }
     }
 }

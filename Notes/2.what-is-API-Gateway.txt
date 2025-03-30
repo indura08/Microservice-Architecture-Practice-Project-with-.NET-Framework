@@ -1,0 +1,34 @@
+1️⃣ What is an API Gateway?
+--------------------------
+
+An API Gateway is a single entry point for all requests going to your microservices. Instead of clients (frontend, mobile apps, etc.) calling each 
+microservice directly, they send requests to the API Gateway, and it forwards them to the right service.
+
+Think of an API Gateway like a restaurant waiter:
+🍽️ You order food from the waiter (API Gateway), and the waiter brings your order from the correct kitchen (Microservice).
+
+Why Use an API Gateway?
+-----------------------
+
+✅ Simplifies communication → Clients don’t need to know about all microservices.
+✅ Load balancing → It can distribute traffic efficiently.
+✅ Security → Can handle authentication & rate-limiting.
+✅ Centralized logging & monitoring → Easier to track API calls.
+
+
+2️⃣ How to Implement an API Gateway in ASP.NET Core
+-----------------------------------------------
+
+To set up an API Gateway for your E-commerce Microservices, we will use Ocelot, a popular .NET API Gateway library.
+
+🔹 Steps to Set Up API Gateway:
+
+Step 1: Create an API Gateway Project
+
+In your existing solution, add a new ASP.NET Core Web API project.
+
+Name it something like "APIGateway".
+
+Install the Ocelot NuGet package:
+
+

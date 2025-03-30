@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserService.Model;
+using UserService.Model.DTOs;
 
 namespace UserService.Data.Services
 {
@@ -13,13 +14,13 @@ namespace UserService.Data.Services
         }
 
 
-        public async Task AddNewUser(User user)
-        {
-            _dbcontext.Users.Add(user);
-            await _dbcontext.SaveChangesAsync();
-        }
+        //public async Task AddNewUser(USerDTO userdto)
+        //{
+        //    _dbcontext.Users.Add(userdto);
+        //    await _dbcontext.SaveChangesAsync();
+        //}
 
-        public async Task<string> DeleteUser(int id)
+        public async Task<string> DeleteUser(string id)
         {
             var currentUser = await GetUserById(id);
             if (currentUser != null)
@@ -33,7 +34,7 @@ namespace UserService.Data.Services
             }
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserById(string id)
         {
             var currentUser = await _dbcontext.Users.FindAsync(id);
             if (currentUser != null)
@@ -46,7 +47,7 @@ namespace UserService.Data.Services
             }
         }
 
-        public async Task UpdateUser(int id, User user)
+        public async Task UpdateUser(string id, User user)
         {
             var currentUser = await GetUserById(id);
             if (currentUser != null)
