@@ -1,5 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using ProductService.Data;
 using ProductService.Data.Services;
 
@@ -13,11 +15,22 @@ namespace ProductService
 
             // Add services to the container.
 
-            builder.Services.AddDbContext<AppDBContext>(options =>
+            //configuring mongodb settings
+            builder.Services.Configure<MongoDBSettings>(
+                builder.Configuration.GetSection("MongoDB"));
 
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConncetionString"))
-            );
+            //Register mongodb client
+            builder.Services.AddSingleton<IMongoClient>(s =>
+                new MongoClient(builder.Configuration.GetValue<string>("MongoDB: ConnectionString")));
 
+
+            builder.Services.AddSingleton(s =>
+            {
+                var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+                var client = s.GetRequiredService<IMongoClient>();
+                var database = client.GetDatabase(settings.DatabaseName);
+                return database;
+            });
             builder.Services.AddScoped<IProductService, ProductServiceClass>();
 
             builder.Services.AddControllers();
