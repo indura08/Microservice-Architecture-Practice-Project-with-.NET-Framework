@@ -25,7 +25,7 @@ namespace ProductService.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<Product>> GetProductById(string id)
         {
             var product = await _productService.GetProductById(id);
             if (product != null)
@@ -48,7 +48,7 @@ namespace ProductService.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<string>> UpdateProductr(int id, Product newProductproduct)
+        public async Task<ActionResult<string>> UpdateProductr(string id, Product newProductproduct)
         {
             var currentProduct = await _productService.GetProductById(id);
             if (currentProduct != null)
@@ -63,7 +63,7 @@ namespace ProductService.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<string>> DeleteProduct(int id)
+        public async Task<ActionResult<string>> DeleteProduct(string id)
         {
             var currentProduct = await _productService.GetProductById(id);
             if (currentProduct != null)

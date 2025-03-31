@@ -1,41 +1,42 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using ProductService.Models;
 
 namespace ProductService.Data.Services
 {
     public class ProductServiceClass : IProductService
     {
-        private readonly AppDBContext _dbContext;
-
-        public ProductServiceClass(AppDBContext dbContext)
+        private readonly IMongoCollection<Product> _products;
+        public ProductServiceClass(IOptions<MongoDBSettings> settings, IMongoClient mongoClient)
         {
-            _dbContext = dbContext;
+            var datatbase = mongoClient.GetDatabase(settings.Value.DatabaseName);
+            _products = datatbase.GetCollection<Product>(settings.Value.ProductCollectionName);
         }
 
         public async Task AddNewProduct(Product newProduct)
         {
-            _dbContext.Products.Add(newProduct);
-            await _dbContext.SaveChangesAsync();
+            await _products.InsertOneAsync(newProduct);
         }
 
-        public async Task DeleteProduct(int id)
+        public async Task DeleteProduct(string id)
         {
             var product = GetProductById(id);
             if (product != null)
             {
-                await _dbContext.Products.Where(product => product.Id == id).ExecuteDeleteAsync();
+                await _products.DeleteOneAsync(p => p.Id == id);
             }
         }
 
         public async Task<List<Product>> GetAllProducts()
         {
-            var products = await _dbContext.Products.ToListAsync();
+            var products = await _products.Find(p => true).ToListAsync();
             return products;
         }
 
-        public async Task<Product> GetProductById(int id)
+        public async Task<Product> GetProductById(string id)
         {
-            var product = await _dbContext.Products.FindAsync(id);
+            var product = await _products.Find(p => p.Id == id).FirstOrDefaultAsync();
             if (product != null)
             {
                 return product;
@@ -46,18 +47,9 @@ namespace ProductService.Data.Services
             }
         }
 
-        public async Task UpdateProduct(int id, Product product)
+        public async Task UpdateProduct(string id, Product product)
         {
-            var currentProduct = await GetProductById(id);
-            if (currentProduct != null)
-            {
-                currentProduct.ProductName = product.ProductName;
-                currentProduct.Price = product.Price;
-                currentProduct.IsAvailable = product.IsAvailable;
-
-                _dbContext.Entry(currentProduct).State = EntityState.Modified;
-                await _dbContext.SaveChangesAsync();
-            }
+            await _products.ReplaceOneAsync(p => product.Id == id, product);
         }
     }
 }

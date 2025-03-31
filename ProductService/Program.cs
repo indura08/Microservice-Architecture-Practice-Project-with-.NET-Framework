@@ -21,9 +21,10 @@ namespace ProductService
 
             //Register mongodb client
             builder.Services.AddSingleton<IMongoClient>(s =>
-                new MongoClient(builder.Configuration.GetValue<string>("MongoDB: ConnectionString")));
-
-
+                new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")));
+                //new MongoClient(builder.Configuration.GetSection("MongoDB")["ConnectionString"])
+                //mehemath puluwan
+    
             builder.Services.AddSingleton(s =>
             {
                 var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
@@ -51,7 +52,7 @@ namespace ProductService
 
 
             app.MapControllers();
-
+            app.MapGet("/", () => "Product service is running no issue found");
             app.Run();
         }
     }

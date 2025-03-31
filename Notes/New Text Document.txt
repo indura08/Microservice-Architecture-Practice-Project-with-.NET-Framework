@@ -1,0 +1,121 @@
+What is MongoDBSettings.cs?
+-----------------------------
+
+MongoDBSettings.cs is simply a configuration model. It's a C# class that matches the structure of the configuration values in appsettings.json. The goal of this class is to store settings such as the MongoDB connection string, database name, and collection names that are needed to connect to MongoDB.
+
+For example, you have this in appsettings.json:
+
+"MongoDB": {
+    "ConnectionString": "mongodb+srv://username:password@cluster.mongodb.net/",
+    "DatabaseName": "EcommerceDB",
+    "ProductCollectionName": "Products"
+}
+
+
+Your MongoDBSettings.cs class looks like this:
+
+public class MongoDBSettings
+{
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
+    public string ProductCollectionName { get; set; }
+}
+
+
+Why do we need MongoDBSettings.cs?
+-------------------------------------
+
+You create this class because it helps map the values from the appsettings.json to typed C# properties so that you can easily use them in your code. It's like saying, "I want to load these specific settings from the configuration and store them as properties in an object."
+
+What is happening in Program.cs?
+----------------------------------
+
+The code in Program.cs is setting up the services for your app, and it's also where you connect to MongoDB. Let me break it down for you:
+
+Step 1: Configuring MongoDB Settings
+======================================
+
+builder.Services.Configure<MongoDBSettings>(
+    builder.Configuration.GetSection("MongoDB"));
+
+
+What this does:
+
+builder.Configuration.GetSection("MongoDB") loads the configuration section from appsettings.json that starts with "MongoDB".
+
+Configure<MongoDBSettings> takes that section and binds it to the MongoDBSettings class. So, it grabs values from appsettings.json and puts them in an instance of MongoDBSettings.
+
+This is how your settings are injected into your app so you can access them as a strongly typed class (MongoDBSettings).
+
+Step 2: Registering MongoDB Client
+==================================
+
+builder.Services.AddSingleton<IMongoClient>(s =>
+    new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")));
+
+
+What this does:
+
+builder.Services.AddSingleton<IMongoClient> tells ASP.NET Core to create a single instance of IMongoClient (the MongoDB client) for the entire lifetime of the application. This is because we don't want to keep creating new MongoDB clients for every request (we just need one client).
+
+new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")) creates a new MongoClient using the connection string you get from the appsettings.json. This will be used to connect to MongoDB.
+
+GetValue<string>("MongoDB:ConnectionString") gets the connection string from the configuration.
+
+Step 3: Registering the MongoDB Database
+========================================
+
+builder.Services.AddSingleton(s =>
+{
+    var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+    var client = s.GetRequiredService<IMongoClient>();
+    var database = client.GetDatabase(settings.DatabaseName);
+    return database;
+});
+
+
+What this does:
+
+GetRequiredService<IOptions<MongoDBSettings>>().Value gets the MongoDBSettings object that you previously configured.
+
+client.GetDatabase(settings.DatabaseName) connects to the database by using the DatabaseName property from MongoDBSettings. This gives you access to the MongoDB database itself.
+
+Finally, you're returning the database instance so it can be injected into your services later.
+
+
+Putting It All Together:
+---------------------------
+
+The purpose of this code is to set up MongoDB as a service in your application. You're configuring MongoDB settings, creating a MongoDB client, and registering the actual MongoDB database as a singleton. This way, the database connection is shared throughout the lifetime of your application.
+
+Why do we need this configuration in Program.cs?
+The reason we need this setup in Program.cs is that it initializes and injects the MongoDB services into your app so that any class that requires a connection to MongoDB (like your ProductService) can easily get it through dependency injection.
+
+In simpler terms, it’s like setting up the necessary connections to MongoDB when the application starts, so the services (like your product service) can use them later when they need them.
+
+
+What Happens When You Run the Application?
+=============================================
+When you run your application, these steps happen:
+
+1. Configuration loading: The MongoDB settings are loaded from appsettings.json and mapped to the MongoDBSettings class.
+
+2. MongoDB Client Creation: The MongoDB client is created using the connection string from the settings.
+
+3. Database Creation: The MongoDB database is then accessed using the settings (e.g., EcommerceDB), and this database is available to your services.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
