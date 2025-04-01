@@ -42,7 +42,7 @@ namespace APIGateway
 
             app.UseCors("AllowAll");
             app.MapControllers();
-
+            app.MapGet("/", () => "API Gateway is up and running");
             app.Run();
         }
     }

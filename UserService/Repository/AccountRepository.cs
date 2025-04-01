@@ -20,6 +20,7 @@ namespace UserService.Repository
                 Name = userDto.Name,
                 EmailAddress = userDto.EmailAddress,
                 Email = userDto.EmailAddress,
+                UserName = userDto.EmailAddress,
                 PasswordHash = userDto.Password,
                 Password = userDto.Password
             };
@@ -28,7 +29,11 @@ namespace UserService.Repository
             if (user is not null) return new ServiceResponse.GeneralResponse(false, "User already registered");
 
             var createUser = await userManager.CreateAsync(newUser!, userDto.Password);
-            if (!createUser.Succeeded) return new ServiceResponse.GeneralResponse(false, "An error occured , please try again");
+            if (!createUser.Succeeded)
+            {
+                var errors = string.Join(", ", createUser.Errors.Select(e => e.Description));
+                return new ServiceResponse.GeneralResponse(false, $"An error occured , please try again. Error is : {errors}");
+            }
 
             var checkUser = await roleManager.FindByNameAsync("USER");
             if (checkUser is null) await roleManager.CreateAsync(new IdentityRole() { Name = "USER" });

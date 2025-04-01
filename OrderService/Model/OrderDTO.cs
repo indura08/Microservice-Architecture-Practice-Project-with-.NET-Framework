@@ -2,9 +2,8 @@
 {
     public class OrderDTO
     {
-        public int UserId { get; set; }
-        public int ProductId { get; set; }
-        public string OrderName { get; set; } = null!;
+        public string UserId { get; set; } = null!;
+        public string ProductId { get; set; } = null!;
         public decimal TotalAmount { get; set; }
     }
 }

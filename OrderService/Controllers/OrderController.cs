@@ -31,7 +31,7 @@ namespace OrderService.Controllers
         public async Task<ActionResult<string>> CreateNewOrder(OrderDTO orderDTO)
         {
             await _orderService.AddOrder(orderDTO);
-            return Ok($"Your order {orderDTO.OrderName} Has been successfully added");
+            return Ok($"Your order {orderDTO.ProductId} Has been successfully added");
         }
 
         [HttpDelete("delete/{id}")]

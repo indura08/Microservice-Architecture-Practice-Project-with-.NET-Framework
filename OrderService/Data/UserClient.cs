@@ -11,9 +11,9 @@ namespace OrderService.Data
             _httpClient = httpClient;
         }
 
-        public async Task<UserDTO> GetUserById(int userId)
+        public async Task<UserDTO> GetUserById(string userId)
         {
-            var response = await _httpClient.GetAsync($"http://localhost:5246/api/Users/{userId}");
+            var response = await _httpClient.GetAsync($"http://localhost:5000/api/Users/{userId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<UserDTO>();
         }

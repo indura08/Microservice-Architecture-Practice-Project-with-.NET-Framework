@@ -25,7 +25,6 @@ namespace OrderService.Data.Services
             {
                 Order newOrder = new Order
                 {
-                    OrderName = orderDTO.OrderName,
                     UserId = orderDTO.UserId,
                     ProductId = orderDTO.ProductId,
                     UserName = userDTO.UserName,
