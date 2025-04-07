@@ -7,10 +7,12 @@ namespace UserService.Data.Services
     public class UserServiceClass : IUserService
     {
         private readonly AppDbContext _dbcontext;
+        private readonly ILogger<UserServiceClass> _logger;
 
-        public UserServiceClass(AppDbContext context)
+        public UserServiceClass(AppDbContext context, ILogger<UserServiceClass> logger)
         {
             _dbcontext = context;
+            _logger = logger;
         }
 
 
@@ -36,9 +38,12 @@ namespace UserService.Data.Services
 
         public async Task<User> GetUserById(string id)
         {
+            _logger.LogInformation($"Get user by id caled with user id : {id}");
+
             var currentUser = await _dbcontext.Users.FindAsync(id);
             if (currentUser != null)
             {
+                _logger.LogWarning($"There is nop user with id {id}");
                 return currentUser;
             }
             else 

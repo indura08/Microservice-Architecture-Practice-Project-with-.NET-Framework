@@ -84,7 +84,7 @@ namespace UserService.Repository
                 expires: DateTime.Now.AddDays(2),
                 signingCredentials: credentials
                 );
-
+            Console.WriteLine(Token);
             return new JwtSecurityTokenHandler().WriteToken(Token);
         }
     }

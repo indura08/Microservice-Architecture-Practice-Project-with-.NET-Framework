@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Data.Services;
 using ProductService.Models;
@@ -17,6 +18,7 @@ namespace ProductService.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "USER")]
         public async Task<ActionResult<List<Product>>> GetAllProducts()
         {
             var products = await _productService.GetAllProducts();

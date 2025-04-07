@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Data.Services;
 using UserService.Model;
@@ -12,23 +13,31 @@ namespace UserService.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserAccount _userAccount;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService, IUserAccount userAccount)
+        public UserController(IUserService userService, IUserAccount userAccount, ILogger<UserController> logger)
         {
             _userService = userService;
             _userAccount = userAccount;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles ="USER")]
         public async Task<ActionResult<User>> GetUserById(string id)
         {
-            var currentUser = await _userService.GetUserById(id);
-            if (currentUser != null)
+            _logger.LogInformation($"Recieved request to get user by id with id : {id}");
+
+            try
             {
+                var currentUser = await _userService.GetUserById(id);
                 return Ok(currentUser);
+                
+                
             }
-            else 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, $"Error occured while fetching data from the server with use id : {id}");
                 return NotFound(null);
             }
         }

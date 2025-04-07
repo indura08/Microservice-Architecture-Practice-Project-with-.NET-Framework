@@ -1,9 +1,12 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using ProductService.Data;
 using ProductService.Data.Services;
+using System.Text;
 
 namespace ProductService
 {
@@ -22,9 +25,27 @@ namespace ProductService
             //Register mongodb client
             builder.Services.AddSingleton<IMongoClient>(s =>
                 new MongoClient(builder.Configuration.GetValue<string>("MongoDB:ConnectionString")));
-                //new MongoClient(builder.Configuration.GetSection("MongoDB")["ConnectionString"])
-                //mehemath puluwan
-    
+            //new MongoClient(builder.Configuration.GetSection("MongoDB")["ConnectionString"])
+            //mehemath puluwan
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+
             builder.Services.AddSingleton(s =>
             {
                 var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
